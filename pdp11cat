@@ -39,7 +39,7 @@ for(my $off=0; $off < $len ; $off++)
 			$len,
 			($len - $off) / ($baud / 8),
 			;
-		usleep 100000;
+		usleep 250000;
 	}
 
 	my $c = substr($data, $off, 1);
