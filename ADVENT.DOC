@@ -1,0 +1,318 @@
+From:	Adventure Maintenance
+Date:	15-NOV-78
+Subj:	Game Information
+
+I.  Adventure, Release 3
+
+Adventure, Release 3, is a maintenance release of Adventure.
+The release kit contains the following files:
+
+	-ADVENT.FOR	main program.
+	-AINIT.FOR	initialization overlay.
+	-AMAIN.FOR	game overlay.
+	-ASUB.FOR	resident subroutines.
+	-AIOSUB.FOR	resident subroutines.
+	-ASUSP.FOR	save/restore subroutines.
+	-AMAC.MAC	resident macro subroutines.
+	-ADVENT.DOC	documentation file.
+	-ATEXT.TXT	game data base file.
+	-ADVENT.ODL	overlay description file (for RSX versions).
+	-ABUILD.FOR	index file build program.
+
+The primary changes incorporated in Release 3 are the following:
+
+	-Improved page formatting.
+	-Upper and lower case output.
+	-SAVE and RESTORE.
+	-Fast initialization feature.
+
+SAVE (synonyms SUSPEND and PAUSE) permits the user to save the current
+state of the game for later analysis or continuation.  RESTORE (synonym
+RESUME) restores a previously SAVEd game.  The fast initialization
+feature reduces the startup time of the game from 60-90 seconds to
+3-5 seconds after the first game.
+
+II. History
+
+This version of Adventure is based on two previous versions:
+
+	-A Fortran-10 version done by Willie Crowther and
+	 Don Woods.
+	-A Fortran-IV-Plus version done by Kent Blackett.
+
+In altering the program to compile under Fortran-IV (Version 1C
+or later) and to run under RT-11, the following changes were made:
+
+	-Magic mode (maintenance mode) was removed.
+	-Section 12 of the data base (magic texts) was removed.
+	-The HOURS command was removed.
+
+Crocks in the language or the compiler necessitated certain other
+changes, notably the removal of Hollerith constants from arithmetic
+expressions and the division of 32-bit integer arrays into multiple
+16-bit integer arrays.
+
+III. Installation Instructions (RT-11 V2C/Fortran-IV V1C)
+
+To create an executable image, issue the following commands:
+
+	.R FORTRA(cr)
+	*ADVENT=ADVENT/V(cr)
+	*AINIT=AINIT/V(cr)
+	*AMAIN=AMAIN/V(cr)
+	*ASUB=ASUB/V(cr)
+	*AIOSUB=AIOSUB/V(cr)
+	*ASUSP=ASUSP/V(cr)
+	*^C
+
+	.R MACRO(cr)
+	*AMAC=AMAC(cr)
+	*^C
+
+	.R LINK(cr)
+	*ADVENT=ADVENT,ASUB,AIOSUB,ASUSP,AMAC/F/C(cr)
+	*AINIT/O:1/C(cr)
+	*AMAIN/O:1(cr)
+	*^C
+
+The linked program can be executed with the command:
+
+	.R ADVENT(cr)
+
+Before running the game for the first time, you must create
+a dummy index file, as outlined in section VII.
+
+When started for the first time, the program will take 60-90
+seconds to create its working files (ATEXT.DAT and AINDX.DAT
+on SY:).  Subsequently, startup should take only 3-5 seconds.
+Do not delete ATEXT.DAT or AINDX.DAT!
+
+IV. Installation Instructions (RT-11 V3/Fortran-IV V2)
+
+To create an executable image, issue the following commands:
+
+	.COMPIL/NOVEC ADVENT,AINIT,AMAIN,ASUB,AIOSUB,ASUSP(cr)
+
+	.COMPIL AMAC(cr)
+
+	.LINK/PROMPT ADVENT,ASUB,AIOSUB,ASUSP,AMAC(cr)
+	*AINIT/O:1(cr)
+	*AMAIN/O:1//(cr)
+
+The linked program can be executed with the command:
+
+	.R ADVENT(cr)
+
+Before running the game for the first time, you must create
+a dummy index file, as outlined in section VII.
+
+When started for the first time, the program will take 60-90
+seconds to create its working files (ATEXT.DAT and AINDX.DAT
+on SY:).  Subsequently, startup should take only 3-5 seconds.
+Do not delete ATEXT.DAT or AINDX.DAT!
+
+V.  Installation Instructions (RSX-11M V3/Fortran-IV V2)
+
+Before attempting to install Adventure, you must create a Files-11
+compatible dummy AINDX.DAT file, as outlined in section VII.
+The Fortran-IV compiler must be installed with a task-space
+increment of at least 16384 (INS $FOR/INC=16384.).
+
+To create an executable image, issue the following commands:
+
+	>FOR(cr)
+	FOR>ADVENT=ADVENT.FOR/NOVE(cr)
+	FOR>AINIT=AINIT.FOR/NOVE(cr)
+	FOR>AMAIN=AMAIN.FOR/NOVE(cr)
+	FOR>ASUB=ASUB.FOR/NOVE(cr)
+	FOR>AIOSUB=AIOSUB.FOR/NOVE(cr)
+	FOR>ASUSP=ASUSP.FOR/NOVE(cr)
+	FOR>^Z
+
+	>MAC(cr)
+	MAC>AMAC=AMAC(cr)
+	MAC>^Z
+
+	>TKB(cr)
+	TKB>ADVENT=ADVENT/MP(cr)
+	ENTER OPTIONS:
+	TKB>TASK=ADVENT(cr)
+	TKB>//(cr)
+
+Alternately, the program can be linked without overlays:
+
+	>TKB(cr)
+	TKB>ADVENT=ADVENT,AINIT,AMAIN,ASUB,AIOSUB,ASUSP,AMAC(cr)
+	TKB>/(cr)
+	ENTER OPTIONS:
+	TKB>TASK=ADVENT(cr)
+	TKB>//(cr)
+
+In either case, the linked program can be executed with the command:
+
+	>RUN ADVENT(cr)
+
+Before running the game for the first time, you must create
+a dummy index file, as outlined in section VII.
+
+When started for the first time, the program will take 60-90
+seconds to create its working files (ATEXT.DAT and AINDX.DAT
+on SY:).  Subsequently, startup should take only 3-5 seconds.
+Do not delete ATEXT.DAT or AINDX.DAT!
+
+VI.  Installation Instructions (RSX-11M V3/Fortran-IV-Plus V2.5)
+
+Before attempting to install Adventure, you must create a Files-11
+compatible dummy AINDX.DAT file, as outlined in section VII.
+The Fortran-IV-Plus compiler must be installed with a task-space
+increment of at least 16384 (INS $F4P/INC=16384.).  Further, there
+must be at least 1000 free blocks on disk LB: to hold the compiler
+work files.
+
+
+To create an executable image, issue the following commands:
+
+	>F4P(cr)
+	F4P>ADVENT=ADVENT.FOR/CO:20(cr)
+	F4P>AINIT=AINIT.FOR/CO:20(cr)
+	F4P>AMAIN=AMAIN.FOR/WF:3/CO:20(cr)
+	F4P>ASUB=ASUB.FOR/CO:20(cr)
+	F4P>AIOSUB=AIOSUB.FOR/CO:20(cr)
+	F4P>ASUSP=ASUSP.FOR/CO:20(cr)
+	F4P>^Z
+
+	>MAC(cr)
+	MAC>AMAC=AMAC(cr)
+	MAC>^Z
+
+	>TKB(cr)
+	TKB>ADVENT=ADVENT/MP(cr)
+	ENTER OPTIONS:
+	TKB>TASK=ADVENT(cr)
+	TKB>//(cr)
+
+Alternately, the program can be linked without overlays:
+
+	>TKB(cr)
+	TKB>ADVENT=ADVENT,AINIT,AMAIN,ASUB,AIOSUB,ASUSP,AMAC(cr)
+	TKB>/(cr)
+	ENTER OPTIONS:
+	TKB>TASK=ADVENT(cr)
+	TKB>//(cr)
+
+In either case, the linked program can be executed with the command:
+
+	>RUN ADVENT(cr)
+
+Before running the game for the first time, you must create
+a dummy index file, as outlined in section VII.
+
+When started for the first time, the program will take 60-90
+seconds to create its working files (ATEXT.DAT and AINDX.DAT
+on SY:).  Subsequently, startup should take only 3-5 seconds.
+Do not delete ATEXT.DAT or AINDX.DAT!
+
+VII.  Creating the Data Base Files
+
+For efficiency reasons, Adventure transforms the variable-length
+records in its data base (ATEXT.TXT) into a fixed length string
+file (ATEXT.DAT) and an array initialization file (AINDX.DAT).
+Once Adventure has created these files, you must not delete them.
+Should either file (or both files) be deleted, the following procedure
+will recreate them.  Note that this procedure must be executed at least
+once to create the initial versions of the files:
+
+	-Compile program ABUILD.FOR.
+
+	-Link it with the compiled version of module ASUSP.FOR.
+
+	-Execute the linked program.
+
+The linked program will produce a version of AINDX.DAT with an
+incompatible version number.  When Adventure is next executed, it
+will note the bad version number, recompile the data base, and write
+out new versions of ATEXT.DAT and AINDX.DAT.  The original version
+of AINDX.DAT, which will still be extent under RSX, may be purged.
+
+Good luck!
+
+
+
+
+
+
+
+
+Abstract of Informational Printouts--
+
+SUMMARY
+-------
+
+Somewhere nearby is Colossal Cave, where others have found fortunes in
+treasure and gold, though it is rumored that some who enter are never
+seen again.  Magic is said to work in the cave.  I will be your eyes
+and hands.  Direct me with commands of 1 or 2 words.  I should warn
+you that I look at only the first four letters of each word, so you'll
+have to enter "NORTHEAST" as "NE" to distinguish it from "NORTH".
+(Should you get stuck, type "HELP" for some general hints.  For infor-
+mation on how to end your adventure, etc., type "INFO".)
+			- - -
+This program was originally developed by Willie Crowther.  Most of the
+features of the current program were added by Don Woods (DON @ SU-AI).
+The current version was done by Kent Blackett and Bob Supnik.
+			- - -
+Bug reports and other correspondence should be sent to:
+
+	Digital Equipment Computer Users Society
+	One Iron Way, MR2-3/E55
+	Marlboro, Mass. 01752
+	Attn:  Adventure Maintenance
+
+HELP
+----
+
+I know of places, actions, and things.  Most of my vocabulary
+describes places and is used to move you there.  To move, try words
+like "FOREST", "DNSTREAM", "ENTER", "EAST", "WEST", "NORTH", "SOUTH",
+"UP", or "DOWN".  I know about a few special objects, like a black rod
+hidden in the cave.  These objects can be manipulated using some of
+the action words that I know.  Usually you will need to give both the
+object and action words (in either order), but sometimes I can infer
+the object from the verb alone.  Some objects also imply verbs; in
+particular, "INVENTORY" implies "TAKE INVENTORY", which causes me to
+give you a list of what you're carrying.  The objects have side
+effects; for instance, the rod scares the bird.  Usually people having
+trouble moving just need to try a few more words.  Usually people
+trying unsuccessfully to manipulate an object are attempting something
+beyond their (or my!) capabilities and should try a completely
+different tack.  To speed the game you can sometimes move long
+distances with a single word.  For example, "BUILDING" usually gets
+you to the building from anywhere above ground except when lost in the
+forest.  Also, note that cave passages turn a lot, and that leaving a
+room to the north does not guarantee entering the next from the south.
+Good luck!
+
+
+INFO
+----
+
+If you want to end your adventure early, say "QUIT".  To suspend your
+adventure such that you can continue later, say "SUSPEND" (or "PAUSE"
+or "SAVE").  To see what hours the cave is normally open, say "HOURS".
+To see how well you're doing, say "SCORE".  To get full credit for a
+treasure, you must leave it safely in the building, though you get
+partial credit just for locating it.  You lose points for getting
+killed, or for quitting, though the former costs you more.  There are
+also points based on how much (if any) of the cave you've managed to
+explore; in particular, there is a large bonus just for getting in (to
+distinguish the beginners from the rest of the pack), and there are
+other ways to determine whether you've been through some of the more
+harrowing sections.  If you think you've found all the treasures, just
+keep exploring for a while.  If nothing interesting happens, you
+haven't found them all yet.  If something interesting DOES happen,
+it means you're getting a bonus and have an opportunity to garner many
+more points in the master's section.  I may occasionally offer hints
+if you seem to be having trouble.  If I do, I'll warn you in advance
+how much it will affect your score to accept the hints.  Finally, to
+save paper, you may specify "BRIEF", which tells me never to repeat
+the full description of a place unless you explicitly ask me to.

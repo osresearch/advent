@@ -1,0 +1,12 @@
+This directory contains all of DECUS 11-340, Adventure, copied to PC
+files.  They are direct ASCII copies, and contain all characters from
+the RT-11 version.  In particular, the sources contain tab characters,
+and presume RT-11's interpretation of tabs.  Some editing/reformatting
+will be necessary if you want to work from these.
+
+Also, please note that this directory contains the original form of
+ATEXT.TXT, within which the INFO text identifies DECUS for support.
+Since DECUS obviously won't support the PC version (they don't even
+know me), ATEXT.TXT and ATEXT.DAT on the rest of this disk have had
+that removed.  Please don't mix up the text files.
+
