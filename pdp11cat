@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 # The serial port is too slow to keep up with data at 1200 baud
 # when use with COPY TT: FILE.TXT so this program feeds the data
-# at a slower speed.
+# at a slower speed.  Instead use EDIT/CREATE.  See the wiki
+# for the example.
 #
 # The data must be ASCII-clean and have \r characters.
 # \n will be stripped.
@@ -17,7 +18,7 @@ my $data = <>;
 # No buffering on output
 $|++;
 
-my $baud = 450;
+my $baud = 6000;
 
 my $len = length $data;
 my $count = 0;
@@ -28,23 +29,33 @@ printf STDERR "%d bytes: %d:%02d\n",
 	($len / ($baud / 8)) % 60,
 	;
 
+my $baud_sleep = 1000000 / ($baud/8);
+
 for(my $off=0; $off < $len ; $off++)
 {
 	# give it a rest each block
 	if ($count == 512)
 	{
 		$count = 0;
-		printf STDERR "%d/%d: %d remaining\n",
+		printf STDERR "-- %d/%d: %d remaining\n",
 			$off,
 			$len,
 			($len - $off) / ($baud / 8),
 			;
-		usleep 250000;
+		usleep 100000;
 	}
 
 	my $c = substr($data, $off, 1);
 	next if ord($c) == 0x0A;
 	print $c;
-	usleep 1000000 / ($baud/8);
+	if (ord($c) == 0x0D)
+	{
+		usleep $baud_sleep * 3;
+		#print STDERR "\n";
+	} else {
+		usleep $baud_sleep;
+		#print STDERR "$c";
+	}
+
 	$count++;
 }
